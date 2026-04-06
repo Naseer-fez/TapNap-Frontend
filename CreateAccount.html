@@ -86,55 +86,85 @@
 
 
     <script src="config.js"></script>
+    <script src="Utils.js"></script>
     <script>
+
+        // if(CheckifAlreadyExist){
+        // console.log("User is already logged in. Redirecting...");
+        //     window.location.href = CONFIG["Redirect"];
+
+        // }
+        // CheckifAlreadyExist();
+
+
         const btn = document.getElementById("btn");
-
-
         btn.addEventListener("click", async () => {
 
 
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
             const Repass = document.getElementById("Repass").value;
-
-            // if (!password || !Repass || !username) {
-            //     alert("You Havent Entered All the Fields!!");
-            //     return;
-            // }
-            // if (password !== Repass) {
-            //     alert("You haven't entered the correct Password");
-            //     return;
-            // }
-            // if (password.length < 8) {
-            //     alert("The password Lenght shoudl be 8 characters long");
-            //     return;
-            // }
+            // const Email = document.getElementById("email").value;
+            if (!password || !Repass || !username) {
+                alert("You Havent Entered All the Fields!!");
+                return;
+            }
+            if (password !== Repass) {
+                alert("You haven't entered the correct Password");
+                return;
+            }
+            if (password.length < 8) {
+                alert("The password Lenght shoudl be 8 characters long");
+                return;
+            }
 
             const userData = {
                 "username": username,
                 "password": password
             };
             URL = CONFIG["BACKENDURL"]
-           
+
             try {
-              const Response=await   fetch(`${URL}/Register`, {
+                const Response = await fetch(`${URL}/Register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(userData)
                 });
-                const Data= await Response.json()
-                console.log(Data)
+                const Data = await Response.json()
+                // console.log(Data["Report"])
+                // console.log(Data)
+                // console.log(Response.status)
+                // {Report: 'GO', Status: 'Fail', Userid: -1}
+                if (Response.status === 400) {
+                    //That means some erro as occured
+                    alert(`Thier is a error ${Data["Report"]}`);
+                    return;
+
+
+                }
+                alert("You Have Been Succesfully Logged in ");
+                const id = Data["Userid"]
+                const expiry = `expires=${60 * 60 * 24 * 365 * 3} ;`
+                const path = "path=/";
+                const sameSite = "SameSite=Lax";
+
+                localStorage.setItem("Userid", id);
+                localStorage.setItem("username", username)
+                document.cookie = `Userid=${id}; ${expiry}; ${path}; ${sameSite}`;
+                document.cookie = `username=${username}; ${expiry}; ${path}; ${sameSite}`;
+                // console.log(decodeURIComponent(document.cookie))
+
 
 
             } catch (error) {
                 console.log(error);
             }
-         
+
 
         });
-
+// console.log(getCookie("Userid"))
     </script>
 </body>
 
