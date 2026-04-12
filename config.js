@@ -1,6 +1,6 @@
 /* config.js — Central configuration. Update URLs to match your deployment. */
 
-const BACKEND_URL  = "https://YOUR_BACKEND_URL_HERE"; // ← replace with your actual backend (e.g. Render URL)
+const BACKEND_URL  = "https://tapnap-backend.onrender.com/"; // ← replace with your actual backend (e.g. Render URL)
 const FRONTEND_URL = "https://tapnap.pages.dev";
 
 const CONFIG = {
