@@ -64,9 +64,24 @@
 
       if (!result.ok) { showToast(result.data.Report || ('Error ' + result.status)); return; }
 
+      var userId = result.data.userid || result.data.Userid || result.data.user_id
+        || result.data.UserId || result.data.id || result.data.ID;
+
+      if (userId === undefined || userId === null || String(userId).trim() === '') {
+        showToast('Code sent, but no user ID was returned. Please try again.', 'error');
+        return;
+      }
+
+      sessionStorage.setItem('resetUserId', String(userId));
+      sessionStorage.setItem('resetEmail', email);
+
       showToast('Code sent! Check your inbox.', 'success');
       setTimeout(function() {
-        window.location.href = CONFIG.ROUTES.CODE_OTP + '?message=' + encodeURIComponent(email);
+        var params = new URLSearchParams({
+          message: email,
+          id: String(userId),
+        });
+        window.location.href = CONFIG.ROUTES.CODE_OTP + '?' + params.toString();
       }, 800);
     });
   </script>

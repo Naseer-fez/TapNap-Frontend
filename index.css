@@ -20,6 +20,7 @@
   --ease:        cubic-bezier(.4,0,.2,1);
   --transition:  220ms cubic-bezier(.4,0,.2,1);
   --divider:     #252b3d;
+  --header-height: 64px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,7 +50,7 @@ body::before {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 200;
-  height: 64px;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -150,7 +151,7 @@ main {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  padding-top: 64px;
+  padding-top: var(--header-height);
   display: grid;
   grid-template-columns: 1fr 1px 1fr;
   grid-template-rows: 1fr;
@@ -178,7 +179,7 @@ main {
   align-items: center;
   justify-content: center;
   padding: 4rem 3rem;
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - var(--header-height));
   animation: panelIn .5s var(--ease) both;
 }
 .panel--left  { animation-delay: .05s; }
@@ -560,14 +561,73 @@ main {
   }
   .panel { min-height: auto; padding: 3rem 2rem; }
   .panel--left { padding-top: 2.5rem; }
+  .panel__inner {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --header-height: 118px;
+  }
+
+  .site-header {
+    height: auto;
+    padding: .85rem 1rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    row-gap: .75rem;
+  }
+
+  .header__left {
+    min-width: 0;
+  }
+
+  .header__nav {
+    grid-column: 1 / -1;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .logo-corner {
+    margin-left: 0;
+    justify-self: end;
+  }
+
+  .panel {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .panel__inner {
+    max-width: 100%;
+  }
+
+  .retrieve-hero {
+    padding: 0;
+  }
+
+  .code-lookup {
+    flex-direction: column;
+  }
+
+  .code-lookup__btn {
+    width: 100%;
+    min-height: 48px;
+  }
 }
 
 @media (max-width: 480px) {
   .site-header {
-    padding: 0 1rem;
+    padding: .85rem 1rem;
     gap: .5rem;
   }
-  .header__nav { gap: .4rem; }
+  .header__left {
+    display: none;
+  }
+  .header__nav {
+    gap: .4rem;
+  }
   .nav-link {
     padding: .38rem .62rem;
     font-size: .78rem;

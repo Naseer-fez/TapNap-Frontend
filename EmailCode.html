@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="/main.css">
 </head>
 <body>
-
   <!-- Logo — top-right on every page -->
   <a href="/" class="logo-corner">
     <img src="/TCP.png" alt="TapNap Logo">
@@ -19,7 +18,6 @@
     <div class="card">
       <p class="card__eyebrow">Verification</p>
       <h1 class="card__title">Check your email.</h1>
-
       <!-- Shows the email address the code was sent to -->
       <div class="email-chip">
         <span>📧</span>
@@ -30,7 +28,6 @@
         Enter the 4-digit code we sent to your address below.
         The code expires in 10 minutes.
       </p>
-
       <!-- OTP input boxes -->
       <div class="otp-row" role="group" aria-label="One-time code">
         <input class="otp" type="number" id="pin-1" min="0" max="9" inputmode="numeric" placeholder="0" aria-label="Digit 1">
@@ -48,9 +45,15 @@
   <script src="/config.js"></script>
   <script src="/utils.js"></script>
   <script>
-    /* ── Read email from URL param ── */
+    /* ── Read reset context from URL/session ── */
     var params = new URLSearchParams(window.location.search);
-    var email  = params.get('message') || '';
+    var email  = params.get('message') || sessionStorage.getItem('resetEmail') || '';
+    var userId = params.get('id') || sessionStorage.getItem('resetUserId') || '';
+
+    function extractUserId(data) {
+      return data.userid || data.Userid || data.user_id || data.UserId || data.id || data.ID;
+    }
+
     if (email) {
       document.getElementById('email-label').textContent = email;
     }
@@ -130,6 +133,13 @@
 
       if (!result.ok) { showToast(result.data.Report || ('Error ' + result.status)); return; }
 
+      var resentUserId = extractUserId(result.data);
+      if (resentUserId !== undefined && resentUserId !== null && String(resentUserId).trim() !== '') {
+        userId = String(resentUserId);
+        sessionStorage.setItem('resetUserId', userId);
+      }
+      sessionStorage.setItem('resetEmail', email);
+
       showToast('New code sent!', 'success');
 
       /* 30-second resend cooldown */
@@ -154,8 +164,16 @@
       var code = pins.map(function(p) { return p.value; }).join('');
       var btn  = document.getElementById('btn-submit');
 
-      if (code.length < 4 || code.includes('')) {
+      if (code.length !== 4) {
         showToast('Please enter all 4 digits.');
+        return;
+      }
+      if (!userId) {
+        showToast('Missing user ID. Please restart the reset flow.', 'error');
+        return;
+      }
+      if (!email) {
+        showToast('Missing email address. Please restart the reset flow.', 'error');
         return;
       }
 
@@ -169,13 +187,22 @@
       if (!result.ok) {
         showToast(result.data.Report || ('Error ' + result.status));
         /* Clear and re-focus on failure */
-        pins.forEach(function(p) { p.value = ''; p.classList.remove('filled'); });
+        pins.forEach(function(p) {
+          p.value = '';
+          p.classList.remove('filled');
+        });
         pins[0].focus();
         return;
       }
 
       showToast('Verified! Redirecting…', 'success');
-      setTimeout(function() { window.location.replace(CONFIG.ROUTES.LOGIN); }, 900);
+      setTimeout(function() {
+        sessionStorage.setItem('resetUserId', userId);
+        if (email) sessionStorage.setItem('resetEmail', email);
+        var nextParams = new URLSearchParams({ id: userId });
+        if (email) nextParams.set('message', email);
+        window.location.replace(CONFIG.ROUTES.RESET + '?' + nextParams.toString());
+      }, 900);
     });
   </script>
 </body>
