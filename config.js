@@ -19,6 +19,7 @@ const CONFIG = {
     REGISTER: `${BACKEND_URL}/Register`,
     FORGOT: (email) => `${BACKEND_URL}/Forgot/${encodeURIComponent(email)}`,
     // Final password reset submit: POST /Verify with body { id, password }.
+    // The id is returned only after OTP verification, not by the initial /Forgot request.
     VERIFY: `${BACKEND_URL}/Verify`,
     CODE: (code, password) =>
       password

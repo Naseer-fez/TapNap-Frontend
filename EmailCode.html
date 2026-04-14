@@ -50,8 +50,9 @@
     var email  = params.get('message') || sessionStorage.getItem('resetEmail') || '';
     var userId = params.get('id') || sessionStorage.getItem('resetUserId') || '';
 
-    function extractUserId(data) {
-      return data.userid || data.Userid || data.user_id || data.UserId || data.id || data.ID;
+    function extractVerifiedId(data) {
+      return data.Codeid || data.codeid || data.userid || data.Userid
+        || data.user_id || data.UserId || data.id || data.ID;
     }
 
     if (email) {
@@ -133,11 +134,6 @@
 
       if (!result.ok) { showToast(result.data.Report || ('Error ' + result.status)); return; }
 
-      var resentUserId = extractUserId(result.data);
-      if (resentUserId !== undefined && resentUserId !== null && String(resentUserId).trim() !== '') {
-        userId = String(resentUserId);
-        sessionStorage.setItem('resetUserId', userId);
-      }
       sessionStorage.setItem('resetEmail', email);
 
       showToast('New code sent!', 'success');
@@ -168,10 +164,6 @@
         showToast('Please enter all 4 digits.');
         return;
       }
-      if (!userId) {
-        showToast('Missing user ID. Please restart the reset flow.', 'error');
-        return;
-      }
       if (!email) {
         showToast('Missing email address. Please restart the reset flow.', 'error');
         return;
@@ -194,6 +186,13 @@
         pins[0].focus();
         return;
       }
+
+      userId = extractVerifiedId(result.data);
+      if (userId === undefined || userId === null || String(userId).trim() === '') {
+        showToast('Code verified, but no reset identifier was returned.', 'error');
+        return;
+      }
+      userId = String(userId);
 
       showToast('Verified! Redirecting…', 'success');
       setTimeout(function() {
