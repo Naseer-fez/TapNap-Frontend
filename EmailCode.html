@@ -194,10 +194,14 @@
       }
       userId = String(userId);
 
+      /* ── NEW: persist username returned by server ── */
+      var username = result.data.username || result.data.Username || '';
+
       showToast('Verified! Redirecting…', 'success');
       setTimeout(function() {
         sessionStorage.setItem('resetUserId', userId);
-        if (email) sessionStorage.setItem('resetEmail', email);
+        if (email)    sessionStorage.setItem('resetEmail',    email);
+        if (username) sessionStorage.setItem('resetUsername', username);
         window.location.replace(CONFIG.ROUTES.RESET);
       }, 900);
     });
