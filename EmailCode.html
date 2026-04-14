@@ -198,9 +198,7 @@
       setTimeout(function() {
         sessionStorage.setItem('resetUserId', userId);
         if (email) sessionStorage.setItem('resetEmail', email);
-        var nextParams = new URLSearchParams({ id: userId });
-        if (email) nextParams.set('message', email);
-        window.location.replace(CONFIG.ROUTES.RESET + '?' + nextParams.toString());
+        window.location.replace(CONFIG.ROUTES.RESET);
       }, 900);
     });
   </script>

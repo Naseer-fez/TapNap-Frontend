@@ -69,8 +69,7 @@
 
       showToast('Code sent! Check your inbox.', 'success');
       setTimeout(function() {
-        var params = new URLSearchParams({ message: email });
-        window.location.href = CONFIG.ROUTES.CODE_OTP + '?' + params.toString();
+        window.location.href = CONFIG.ROUTES.CODE_OTP;
       }, 800);
     });
   </script>
